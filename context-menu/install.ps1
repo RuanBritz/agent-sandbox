@@ -40,7 +40,8 @@ if (-not $Agent) {
 $pwsh = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
 if (-not $pwsh) { $pwsh = (Get-Command powershell).Source }
 $script = Join-Path (Split-Path $PSScriptRoot) 'sandbox.ps1'
-$icon = 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
+# Each entry uses icons\<agent>.ico if present, otherwise the Docker Desktop icon
+$defaultIcon = 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
 
 foreach ($root in $roots) {
     foreach ($name in $names) {
@@ -52,7 +53,10 @@ foreach ($root in $roots) {
         $label, $agentName = $entries[$name]
         New-Item -Path "$key\command" -Force | Out-Null
         Set-ItemProperty -Path $key -Name '(default)' -Value $label
+        $icon = Join-Path $PSScriptRoot "icons\$agentName.ico"
+        if (-not (Test-Path $icon)) { $icon = $defaultIcon }
         if (Test-Path $icon) { Set-ItemProperty -Path $key -Name 'Icon' -Value $icon }
+        else { Remove-ItemProperty -Path $key -Name 'Icon' -ErrorAction SilentlyContinue }
         $command = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$script`" -PauseOnError -Agent $agentName `"%V`""
         Set-ItemProperty -Path "$key\command" -Name '(default)' -Value $command
     }

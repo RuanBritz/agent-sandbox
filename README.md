@@ -14,7 +14,8 @@ The image is rebuilt automatically when the Dockerfile changes.
 Right-click menu: `.\context-menu\install.ps1` asks which entries to add for folders
 (bash, Claude Code, Codex, pi; Windows 11: under "Show more options"). Re-run it to change the
 selection, or pass `-Agent bash,codex` to skip the prompt. Remove them all with
-`.\context-menu\uninstall.ps1`.
+`.\context-menu\uninstall.ps1`. Entries use `context-menu\icons\<agent>.ico` if it exists,
+otherwise the Docker Desktop icon.
 
 ## What the agent can see
 Everything in `./workspace` and in the folders you mount, including `.env` files and keys.
