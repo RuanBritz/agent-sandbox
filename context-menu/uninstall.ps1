@@ -1,7 +1,7 @@
-# Remove every agent sandbox entry that install-context-menu.ps1 added to the Explorer
+# Remove every agent sandbox entry that install.ps1 added to the Explorer
 # right-click menu (current user only), including ones since commented out of it.
 #
-#   .\uninstall-context-menu.ps1
+#   .\context-menu\uninstall.ps1
 
 $ErrorActionPreference = 'Stop'
 

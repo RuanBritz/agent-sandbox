@@ -1,8 +1,8 @@
 # Add agent sandbox entries to the Explorer right-click menu for folders (current user only).
 # On Windows 11 they appear under "Show more options".
 #
-#   .\install-context-menu.ps1   # add (re-run after moving this folder)
-# Remove them with .\uninstall-context-menu.ps1
+#   .\context-menu\install.ps1   # add (re-run after moving the agent-sandbox folder)
+# Remove them with .\context-menu\uninstall.ps1
 
 $ErrorActionPreference = 'Stop'
 
@@ -18,7 +18,7 @@ $roots = 'HKCU:\Software\Classes\Directory\shell', 'HKCU:\Software\Classes\Direc
 
 $pwsh = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
 if (-not $pwsh) { $pwsh = (Get-Command powershell).Source }
-$script = Join-Path $PSScriptRoot 'sandbox.ps1'
+$script = Join-Path (Split-Path $PSScriptRoot) 'sandbox.ps1'
 $icon = 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
 
 foreach ($root in $roots) {
