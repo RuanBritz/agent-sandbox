@@ -1,9 +1,8 @@
 # Add agent sandbox entries to the Explorer right-click menu for folders (current user only).
 # On Windows 11 they appear under "Show more options".
 #
-#   .\install-context-menu.ps1              # add (re-run after moving this folder)
-#   .\install-context-menu.ps1 -Uninstall   # remove
-param([switch]$Uninstall)
+#   .\install-context-menu.ps1   # add (re-run after moving this folder)
+# Remove them with .\uninstall-context-menu.ps1
 
 $ErrorActionPreference = 'Stop'
 
@@ -16,14 +15,6 @@ $entries = [ordered]@{
 }
 # Right-click on a folder, and right-click on the background inside a folder
 $roots = 'HKCU:\Software\Classes\Directory\shell', 'HKCU:\Software\Classes\Directory\Background\shell'
-
-if ($Uninstall) {
-    foreach ($root in $roots) {
-        foreach ($name in $entries.Keys) { if (Test-Path "$root\$name") { Remove-Item "$root\$name" -Recurse } }
-    }
-    Write-Host 'Removed the agent sandbox entries from the context menu.'
-    return
-}
 
 $pwsh = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
 if (-not $pwsh) { $pwsh = (Get-Command powershell).Source }

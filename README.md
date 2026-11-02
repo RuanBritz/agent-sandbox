@@ -13,7 +13,8 @@ The image is rebuilt automatically when the Dockerfile changes.
 
 Right-click menu: `.\install-context-menu.ps1` adds "Open in agent sandbox" for folders
 (Windows 11: under "Show more options"). Claude Code, Codex and pi entries are commented out
-in the script; uncomment to add them. Remove with `-Uninstall`.
+in the script; uncomment to add them. Remove them with
+`.\uninstall-context-menu.ps1`.
 
 ## What the agent can see
 Everything in `./workspace` and in the folders you mount, including `.env` files and keys.
