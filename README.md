@@ -11,9 +11,10 @@
 home volume (logins, pip/npm installs, agent config) is shared and persists.
 The image is rebuilt automatically when the Dockerfile changes.
 
-Right-click menu: `.\context-menu\install.ps1` adds "Open in agent sandbox" for folders
-(Windows 11: under "Show more options"). Claude Code, Codex and pi entries are commented out
-in the script; uncomment to add them. Remove them with `.\context-menu\uninstall.ps1`.
+Right-click menu: `.\context-menu\install.ps1` asks which entries to add for folders
+(bash, Claude Code, Codex, pi; Windows 11: under "Show more options"). Re-run it to change the
+selection, or pass `-Agent bash,codex` to skip the prompt. Remove them all with
+`.\context-menu\uninstall.ps1`.
 
 ## What the agent can see
 Everything in `./workspace` and in the folders you mount, including `.env` files and keys.
