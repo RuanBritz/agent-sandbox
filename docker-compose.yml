@@ -6,7 +6,7 @@ services:
     volumes:
       - ./workspace:/workspace      # always mounted; sandbox.ps1 adds extra folders under /mnt
       - agent-home:/home/agent      # persists venv, npm globals, agent config
-      - ./pi/models.json:/home/agent/.pi/agent/models.json:ro   # pi custom providers/models
+      - ./agent-config:/etc/agent-config:ro   # per-agent config, copied into $HOME on start
     # --- hardening ---
     read_only: true                 # root filesystem is immutable
     tmpfs:

@@ -23,7 +23,11 @@ Mount only what the agent needs, and add `:ro` where it shouldn't write. You get
 a mounted repo's `.git/config` has credentials in a remote URL.
 
 ## Config
-- `pi/models.json` is mounted read-only as pi's `models.json`.
+- `agent-config/<agent>/` is copied into that agent's config dir each time a container starts,
+  overwriting files with the same name (deleting a file here doesn't delete the copy):
+  - `agent-config/claude/` → `~/.claude/` (`CLAUDE.md`, `settings.json`, `agents/`, `commands/`, ...)
+  - `agent-config/codex/` → `~/.codex/` (`AGENTS.md`, `config.toml`, ...)
+  - `agent-config/pi/` → `~/.pi/agent/` (`AGENTS.md`, `models.json`, `settings.json`, ...)
 - Claude Code, Codex and pi are baked into the image (`/opt/agent-tools`); rebuild to update them.
 - Codex runs with its own sandbox off (the container is the sandbox). No ports are published,
   so sign in with `codex login --device-auth` or an `OPENAI_API_KEY`.

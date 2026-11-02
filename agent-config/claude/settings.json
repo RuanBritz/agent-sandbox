@@ -1,0 +1,9 @@
+{
+  "theme": "dark",
+  "agentPushNotifEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeCoAuthoredBy": false
+}

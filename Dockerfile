@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:22-bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -29,9 +30,19 @@ ENV PATH=/opt/agent-tools/bin:/home/agent/.venv/bin:/home/agent/.local/bin:/home
 # User-owned Python venv and npm prefix, so the agent can install packages without root
 RUN python3 -m venv $VIRTUAL_ENV && pip install --no-cache-dir --upgrade pip
 
-# Pre-create pi's config dir; otherwise Docker creates it as root when mounting models.json into it
-RUN mkdir -p /home/agent/.pi/agent
+# On every start, copy ./agent-config/<agent>/ (mounted at /etc/agent-config) into that agent's config
+# dir, overwriting files with the same name. Inlined because .dockerignore sends no build context.
+COPY --chmod=755 <<'EOF' /usr/local/bin/sandbox-entrypoint
+#!/bin/sh
+copy() {
+    if [ -d "/etc/agent-config/$1" ]; then mkdir -p "$2" && cp -rT --remove-destination --no-preserve=mode "/etc/agent-config/$1" "$2"; fi
+}
+copy claude "$HOME/.claude"
+copy codex "$HOME/.codex"
+copy pi "$HOME/.pi/agent"
+exec "$@"
+EOF
 
 WORKDIR /workspace
-ENTRYPOINT ["tini", "--"]
+ENTRYPOINT ["tini", "--", "sandbox-entrypoint"]
 CMD ["bash"]
