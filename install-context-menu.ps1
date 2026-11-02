@@ -11,6 +11,7 @@ $ErrorActionPreference = 'Stop'
 $entries = [ordered]@{
     'AgentSandbox'       = 'Open in agent sandbox', 'bash'
     # 'AgentSandboxClaude' = 'Open Claude Code here (sandbox)', 'claude'
+    # 'AgentSandboxCodex'  = 'Open Codex here (sandbox)', 'codex'
     # 'AgentSandboxPi'     = 'Open pi here (sandbox)', 'pi'
 }
 # Right-click on a folder, and right-click on the background inside a folder

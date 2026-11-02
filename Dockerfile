@@ -16,6 +16,8 @@ ARG INSTALL_CLAUDE_CODE=true
 RUN if [ "$INSTALL_CLAUDE_CODE" = "true" ]; then npm install -g --prefix /opt/agent-tools @anthropic-ai/claude-code; fi
 ARG INSTALL_PI=true
 RUN if [ "$INSTALL_PI" = "true" ]; then npm install -g --prefix /opt/agent-tools --ignore-scripts @earendil-works/pi-coding-agent; fi
+ARG INSTALL_CODEX=true
+RUN if [ "$INSTALL_CODEX" = "true" ]; then npm install -g --prefix /opt/agent-tools @openai/codex; fi
 
 USER agent
 ENV HOME=/home/agent \
