@@ -1,0 +1,3 @@
+# The Dockerfile copies nothing from this folder; send no build context (keeps ./workspace,
+# and anything secret in it, away from the daemon and makes every launch fast).
+*

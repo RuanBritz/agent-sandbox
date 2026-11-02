@@ -1,0 +1,24 @@
+services:
+  agent:
+    build: .
+    image: agent-sandbox
+    working_dir: /workspace
+    volumes:
+      - ./workspace:/workspace      # always mounted; sandbox.ps1 adds extra folders under /mnt
+      - agent-home:/home/agent      # persists venv, npm globals, agent config
+      - ./pi/models.json:/home/agent/.pi/agent/models.json:ro   # pi custom providers/models
+    # --- hardening ---
+    read_only: true                 # root filesystem is immutable
+    tmpfs:
+      - /tmp:size=512m,exec         # exec: some installers build/run code from /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 512
+    mem_limit: ${SANDBOX_MEMORY:-4g}   # sandbox.ps1 -Memory
+    cpus: ${SANDBOX_CPUS:-2}           # sandbox.ps1 -Cpus
+    # Stronger kernel isolation if gVisor is installed on the host:
+    # runtime: runsc
+
+volumes:
+  agent-home:
