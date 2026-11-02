@@ -79,7 +79,9 @@ function Invoke-Sandbox {
     $runArgs += '--name', $container
     $cleanup = "Wait-Process -Id $PID -ErrorAction SilentlyContinue; docker rm -f $container *> `$null"
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cleanup))
-    $watcher = Start-Process (Get-Process -Id $PID).Path -WindowStyle Hidden -PassThru `
+    # Windows PowerShell rather than this process's own exe: pwsh installed as a dotnet tool runs
+    # as dotnet.exe, which doesn't take PowerShell's arguments
+    $watcher = Start-Process "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -WindowStyle Hidden -PassThru `
         -ArgumentList "-NoProfile -NonInteractive -EncodedCommand $encoded"
 
     $started = Get-Date
