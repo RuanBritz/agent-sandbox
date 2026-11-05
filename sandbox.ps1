@@ -12,6 +12,7 @@ param(
     [string]$Agent = 'bash',
     [string]$Memory,
     [string]$Cpus,
+    [string[]]$Port = @(),           # "3000" or "host:container"; published on 127.0.0.1 only
     [switch]$PauseOnError,           # used by the right-click menu, so errors stay readable
     [Parameter(ValueFromRemainingArguments)]
     [string[]]$Folders = @()
@@ -58,6 +59,25 @@ function Invoke-Sandbox {
     }
 
     if ($names.Count -eq 1) { $runArgs += '-w', "/mnt/$($names.Keys | Select-Object -First 1)" }
+    # Bound to 127.0.0.1 so only this PC can connect, not the LAN
+    # The right-click menu passes them as one "3000,5173" string
+    $ports = @()
+    foreach ($p in ($Port -split ',' | ForEach-Object Trim | Where-Object { $_ })) {
+        if ($p -notmatch '^(?:(\d{1,5}):)?(\d{1,5})$') { throw "Bad -Port value '$p'; use 3000 or 8080:3000." }
+        $containerPort = $Matches[2]
+        $hostPort = if ($Matches[1]) { $Matches[1] } else { $containerPort }
+        # Skip ports another sandbox (or app) already holds, rather than fail to start
+        $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, [int]$hostPort)
+        try { $listener.Start(); $listener.Stop() } catch {
+            Write-Host "Warning: localhost:$hostPort is already in use; not publishing it." -ForegroundColor Yellow
+            continue
+        }
+        $runArgs += '-p', "127.0.0.1:${hostPort}:${containerPort}"
+        $ports += $containerPort
+        Write-Host "http://localhost:$hostPort -> container port $containerPort"
+    }
+    if ($ports) { $runArgs += '-e', "SANDBOX_PORTS=$($ports -join ',')" }
+
     if ($Memory) { $env:SANDBOX_MEMORY = $Memory }
     if ($Cpus) { $env:SANDBOX_CPUS = $Cpus }
 

@@ -4,10 +4,12 @@
 #
 #   .\context-menu\install.ps1                        # pick from a list
 #   .\context-menu\install.ps1 -Agent bash,codex      # no prompt
+#   .\context-menu\install.ps1 -Port 3000,5173        # every entry publishes these (see sandbox.ps1)
 # Re-run after moving the agent-sandbox folder. Remove everything with .\context-menu\uninstall.ps1
 param(
     [ValidateSet('bash', 'claude', 'codex', 'pi')]
-    [string[]]$Agent
+    [string[]]$Agent,
+    [string[]]$Port
 )
 
 $ErrorActionPreference = 'Stop'
@@ -38,6 +40,14 @@ if (-not $Agent) {
 } else {
     $selected = $names | Where-Object { $entries[$_][1] -in $Agent }
 }
+if (-not $PSBoundParameters.ContainsKey('Port') -and -not $Agent) {
+    $Port = Read-Host 'Ports to publish on localhost, e.g. 3000,8080:80 (Enter = none)'
+}
+$Port = @($Port -split '[,\s]+' | Where-Object { $_ })
+foreach ($p in $Port) {
+    if ($p -notmatch '^(?:\d{1,5}:)?\d{1,5}$') { throw "Bad port '$p'; use 3000 or 8080:3000." }
+}
+$portArg = if ($Port) { " -Port $($Port -join ',')" } else { '' }
 
 $pwsh = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
 if (-not $pwsh) { $pwsh = (Get-Command powershell).Source }
@@ -69,8 +79,9 @@ foreach ($root in $roots) {
         $icon = Join-Path $PSScriptRoot "icons\$agentName.ico"
         if (-not (Test-Path $icon)) { $icon = $defaultIcon }
         Set-Icon $key $icon
-        $command = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$script`" -PauseOnError -Agent $agentName `"%V`""
+        $command = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$script`" -PauseOnError -Agent $agentName$portArg `"%V`""
         Set-ItemProperty -Path "$key\command" -Name '(default)' -Value $command
     }
 }
 Write-Host "$menuLabel submenu now has: $(($selected | ForEach-Object { $entries[$_][0] }) -join ', ')"
+if ($Port) { Write-Host "Each entry publishes: $($Port -join ', ')" }
