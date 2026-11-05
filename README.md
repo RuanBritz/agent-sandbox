@@ -11,8 +11,9 @@
 home volume (logins, pip/npm installs, agent config) is shared and persists.
 The image is rebuilt automatically when the Dockerfile changes.
 
-Right-click menu: `.\context-menu\install.ps1` asks which entries to add for folders
-(bash, Claude Code, Codex, pi; Windows 11: under "Show more options"). Re-run it to change the
+Right-click menu: `.\context-menu\install.ps1` adds an "Agent sandbox" submenu for folders
+and asks which entries to put in it (bash, Claude Code, Codex, pi; Windows 11: under "Show more
+options"). Re-run it to change the
 selection, or pass `-Agent bash,codex` to skip the prompt. Remove them all with
 `.\context-menu\uninstall.ps1`. Entries use `context-menu\icons\<agent>.ico` if it exists,
 otherwise the Docker Desktop icon.
