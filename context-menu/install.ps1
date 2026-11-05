@@ -59,7 +59,7 @@ foreach ($root in $roots) {
     New-Item -Path "$menu\shell" -Force | Out-Null
     Set-ItemProperty -Path $menu -Name 'MUIVerb' -Value $menuLabel
     Set-ItemProperty -Path $menu -Name 'SubCommands' -Value ''
-    Set-Icon $menu $defaultIcon
+    Set-Icon $menu (Join-Path $PSScriptRoot 'icons\menu.ico')
 
     foreach ($name in $selected) {
         $label, $agentName = $entries[$name]

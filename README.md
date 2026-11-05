@@ -16,7 +16,7 @@ and asks which entries to put in it (bash, Claude Code, Codex, pi; Windows 11: u
 options"). Re-run it to change the
 selection, or pass `-Agent bash,codex` to skip the prompt. Remove them all with
 `.\context-menu\uninstall.ps1`. Entries use `context-menu\icons\<agent>.ico` if it exists,
-otherwise the Docker Desktop icon.
+otherwise the Docker Desktop icon; the submenu itself uses `icons\menu.ico`.
 
 ## What the agent can see
 Everything in `./workspace` and in the folders you mount, including `.env` files and keys.
