@@ -4,11 +4,11 @@
 #   .\sandbox.ps1                              # bash, just ./workspace
 #   .\sandbox.ps1 C:\code\foo                  # also mount foo, start in /mnt/foo
 #   .\sandbox.ps1 C:\code\foo D:\data\bar:ro   # several folders; ":ro" = read-only
-#   .\sandbox.ps1 -Agent claude C:\code\foo    # start Claude Code, Codex or pi instead of bash
+#   .\sandbox.ps1 -Agent claude C:\code\foo    # start Claude Code, Codex, pi or opencode instead of bash
 #   .\sandbox.ps1 -Memory 8g -Cpus 4 C:\code\foo
 [CmdletBinding(PositionalBinding = $false)]
 param(
-    [ValidateSet('bash', 'claude', 'codex', 'pi')]
+    [ValidateSet('bash', 'claude', 'codex', 'pi', 'opencode')]
     [string]$Agent = 'bash',
     [string]$Memory,
     [string]$Cpus,
@@ -85,6 +85,7 @@ function Invoke-Sandbox {
         'claude' { 'claude', '--dangerously-skip-permissions' }
         'codex'  { 'codex', '--dangerously-bypass-approvals-and-sandbox' }
         'pi'     { 'pi' }
+        'opencode' { 'opencode' }
         default  { 'bash' }
     })
 

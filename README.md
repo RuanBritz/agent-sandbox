@@ -4,7 +4,7 @@
     .\sandbox.ps1                              # bash in a fresh container; removed on exit
     .\sandbox.ps1 C:\code\foo                  # also mount a folder at /mnt/foo and start there
     .\sandbox.ps1 C:\code\foo D:\data\bar:ro   # several folders; ":ro" = read-only
-    .\sandbox.ps1 -Agent claude C:\code\foo    # start Claude Code, Codex or pi directly
+    .\sandbox.ps1 -Agent claude C:\code\foo    # start Claude Code, Codex, pi or opencode directly
     .\sandbox.ps1 -Memory 8g -Cpus 4 C:\code\foo   # defaults: 4g, 2 CPUs
     .\sandbox.ps1 -Port 3000,8080:80 C:\code\foo   # localhost:3000 -> 3000, localhost:8080 -> 80
 
@@ -13,7 +13,7 @@ home volume (logins, pip/npm installs, agent config) is shared and persists.
 The image is rebuilt automatically when the Dockerfile changes.
 
 Right-click menu: `.\context-menu\install.ps1` adds an "Agent sandbox" submenu for folders
-and asks which entries to put in it (bash, Claude Code, Codex, pi; Windows 11: under "Show more
+and asks which entries to put in it (bash, Claude Code, Codex, pi, opencode; Windows 11: under "Show more
 options"). Re-run it to change the
 selection, or pass `-Agent bash,codex` to skip the prompt. Remove them all with
 `.\context-menu\uninstall.ps1`. Entries use `context-menu\icons\<agent>.ico` if it exists,
@@ -31,7 +31,10 @@ a mounted repo's `.git/config` has credentials in a remote URL.
   - `agent-config/claude/` → `~/.claude/` (`CLAUDE.md`, `settings.json`, `agents/`, `commands/`, ...)
   - `agent-config/codex/` → `~/.codex/` (`AGENTS.md`, `config.toml`, ...)
   - `agent-config/pi/` → `~/.pi/agent/` (`AGENTS.md`, `models.json`, `settings.json`, ...)
-- Claude Code, Codex and pi are baked into the image (`/opt/agent-tools`); rebuild to update them.
+  - `agent-config/opencode/` → `~/.config/opencode/` (`AGENTS.md`, `opencode.json`, ...)
+- Claude Code, Codex, pi and opencode are baked into the image (`/opt/agent-tools`); rebuild to update them.
+- pi and opencode use the LM Studio server set in `models.json` / `opencode.json`. opencode's
+  permission prompts are turned off in `opencode.json` (the container is the sandbox).
 - Codex runs with its own sandbox off (the container is the sandbox). No ports are published
   unless you pass `-Port`, so sign in with `codex login --device-auth` or an `OPENAI_API_KEY`.
 

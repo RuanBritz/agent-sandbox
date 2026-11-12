@@ -17,6 +17,8 @@ ARG INSTALL_CLAUDE_CODE=true
 RUN if [ "$INSTALL_CLAUDE_CODE" = "true" ]; then npm install -g --prefix /opt/agent-tools @anthropic-ai/claude-code; fi
 ARG INSTALL_PI=true
 RUN if [ "$INSTALL_PI" = "true" ]; then npm install -g --prefix /opt/agent-tools --ignore-scripts @earendil-works/pi-coding-agent; fi
+ARG INSTALL_OPENCODE=true
+RUN if [ "$INSTALL_OPENCODE" = "true" ]; then npm install -g --prefix /opt/agent-tools opencode-ai; fi
 ARG INSTALL_CODEX=true
 RUN if [ "$INSTALL_CODEX" = "true" ]; then npm install -g --prefix /opt/agent-tools @openai/codex; fi
 
@@ -40,6 +42,7 @@ copy() {
 copy claude "$HOME/.claude"
 copy codex "$HOME/.codex"
 copy pi "$HOME/.pi/agent"
+copy opencode "$HOME/.config/opencode"
 exec "$@"
 EOF
 
