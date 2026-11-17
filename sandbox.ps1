@@ -1,14 +1,14 @@
 # Start a throwaway sandbox container and remove it on exit.
-# Folders passed in are mounted at /mnt/<folder-name>; ./workspace is always at /workspace.
+# Folders passed in are mounted at /mnt/<folder-name>. With none, it starts in the home directory.
 #
-#   .\sandbox.ps1                              # bash, just ./workspace
-#   .\sandbox.ps1 C:\code\foo                  # also mount foo, start in /mnt/foo
+#   .\sandbox.ps1                              # bash, no host folders
+#   .\sandbox.ps1 C:\code\foo                  # mount foo, start in /mnt/foo
 #   .\sandbox.ps1 C:\code\foo D:\data\bar:ro   # several folders; ":ro" = read-only
-#   .\sandbox.ps1 -Agent claude C:\code\foo    # start Claude Code, Codex, pi or opencode instead of bash
+#   .\sandbox.ps1 -Agent claude C:\code\foo    # start Claude Code, Codex, pi, opencode or herdr instead of bash
 #   .\sandbox.ps1 -Memory 8g -Cpus 4 C:\code\foo
 [CmdletBinding(PositionalBinding = $false)]
 param(
-    [ValidateSet('bash', 'claude', 'codex', 'pi', 'opencode')]
+    [ValidateSet('bash', 'claude', 'codex', 'pi', 'opencode', 'herdr')]
     [string]$Agent = 'bash',
     [string]$Memory,
     [string]$Cpus,
@@ -59,6 +59,7 @@ function Invoke-Sandbox {
     }
 
     if ($names.Count -eq 1) { $runArgs += '-w', "/mnt/$($names.Keys | Select-Object -First 1)" }
+    elseif ($names.Count -gt 1) { $runArgs += '-w', '/mnt' }
     # Bound to 127.0.0.1 so only this PC can connect, not the LAN
     # The right-click menu passes them as one "3000,5173" string
     $ports = @()
@@ -86,6 +87,9 @@ function Invoke-Sandbox {
         'codex'  { 'codex', '--dangerously-bypass-approvals-and-sandbox' }
         'pi'     { 'pi' }
         'opencode' { 'opencode' }
+        # herdr restores its last session from the shared home volume and then ignores the start
+        # folder; that session's panes died with their container, so start fresh each time
+        'herdr'  { 'sh', '-c', 'rm -rf ~/.config/herdr/session.json ~/.config/herdr/session-snapshots; exec herdr' }
         default  { 'bash' }
     })
 

@@ -8,8 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Rename the image's built-in "node" user (uid 1000) to "agent". The agent never runs as root.
-RUN usermod -l agent -d /home/agent -m node && groupmod -n agent node \
- && mkdir -p /workspace && chown agent:agent /workspace
+RUN usermod -l agent -d /home/agent -m node && groupmod -n agent node
 
 # Optional: preinstall agent CLIs (set to "false" to skip). They live in /opt, outside the
 # home volume, so rebuilding the image actually updates them.
@@ -21,6 +20,9 @@ ARG INSTALL_OPENCODE=true
 RUN if [ "$INSTALL_OPENCODE" = "true" ]; then npm install -g --prefix /opt/agent-tools opencode-ai; fi
 ARG INSTALL_CODEX=true
 RUN if [ "$INSTALL_CODEX" = "true" ]; then npm install -g --prefix /opt/agent-tools @openai/codex; fi
+# herdr (agent multiplexer): official installer, which checks the binary's SHA-256
+ARG INSTALL_HERDR=true
+RUN if [ "$INSTALL_HERDR" = "true" ]; then curl -fsSL https://herdr.dev/install.sh | HERDR_INSTALL_DIR=/opt/agent-tools/bin sh; fi
 
 USER agent
 ENV HOME=/home/agent \
@@ -43,9 +45,10 @@ copy claude "$HOME/.claude"
 copy codex "$HOME/.codex"
 copy pi "$HOME/.pi/agent"
 copy opencode "$HOME/.config/opencode"
+copy herdr "$HOME/.config/herdr"
 exec "$@"
 EOF
 
-WORKDIR /workspace
+WORKDIR /home/agent
 ENTRYPOINT ["tini", "--", "sandbox-entrypoint"]
 CMD ["bash"]

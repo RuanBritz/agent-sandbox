@@ -7,7 +7,7 @@
 #   .\context-menu\install.ps1 -Port 3000,5173        # every entry publishes these (see sandbox.ps1)
 # Re-run after moving the agent-sandbox folder. Remove everything with .\context-menu\uninstall.ps1
 param(
-    [ValidateSet('bash', 'claude', 'codex', 'pi', 'opencode')]
+    [ValidateSet('bash', 'claude', 'codex', 'pi', 'opencode', 'herdr')]
     [string[]]$Agent,
     [string[]]$Port
 )
@@ -21,6 +21,7 @@ $entries = [ordered]@{
     '3Codex'  = 'Codex', 'codex'
     '4Pi'     = 'pi', 'pi'
     '5OpenCode' = 'opencode', 'opencode'
+    '6Herdr'    = 'herdr', 'herdr'
 }
 $menuName = 'AgentSandbox'
 $menuLabel = 'Agent sandbox'

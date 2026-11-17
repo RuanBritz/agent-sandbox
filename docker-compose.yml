@@ -2,10 +2,8 @@ services:
   agent:
     build: .
     image: agent-sandbox
-    working_dir: /workspace
     volumes:
-      - ./workspace:/workspace      # always mounted; sandbox.ps1 adds extra folders under /mnt
-      - agent-home:/home/agent      # persists venv, npm globals, agent config
+      - agent-home:/home/agent      # persists venv, npm globals, agent config; sandbox.ps1 adds folders under /mnt
       - ./agent-config:/etc/agent-config:ro   # per-agent config, copied into $HOME on start
     # --- hardening ---
     read_only: true                 # root filesystem is immutable

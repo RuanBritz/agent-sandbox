@@ -1,7 +1,8 @@
 # Sandbox environment
 
 - You are running in a throwaway Docker container as the non-root user `agent`.
-- `/workspace` and any folders under `/mnt` are mounted from the host; everything else is lost when the container exits, except your home directory.
+- Folders under `/mnt` are mounted from the host; everything else is lost when the container exits, except your home directory.
 - Install Python packages with `pip install` (a venv is active) and Node packages with `npm install -g`; there is no root or sudo.
 - Ports listed in `$SANDBOX_PORTS` (if set) are forwarded to the host's localhost. Servers must listen on `0.0.0.0`, not `localhost`/`127.0.0.1`, to be reachable.
 - Never commit or push to git unless the user explicitly asks for that specific change.
+- If `$HERDR_ENV` is `1`, you are running in a pane of herdr, a terminal multiplexer for coding agents; other agents or shells may be in neighbouring panes. Before controlling panes, agents or workspaces, run `herdr --skill` for the exact commands. Don't start `herdr` yourself (nested launches are blocked) and don't use tmux commands; herdr is not tmux.
